@@ -3,7 +3,7 @@
 
 const CFG = window.MUNDWERK_CONFIG || {};
 const DIALEKT = CFG.dialekt || 'tirol';
-const TABS = [['start','Start'],['situationen','Situationen'],['lernen','Lernen'],['laute','Lautregeln'],['community','Community'],['listen','Meine Listen']];
+const TABS = [['start','Start'],['uebersetzer','Übersetzer'],['situationen','Situationen'],['lernen','Lernen'],['laute','Lautregeln'],['community','Community'],['listen','Meine Listen']];
 const SCHWELLE = 20;
 /* ---------- Hilfen ---------- */
 const $ = (s, r=document) => r.querySelector(s);
@@ -18,7 +18,7 @@ let toastT;
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2600); }
 
 const BUILTIN = [];
-SITS.forEach(s => s.p.forEach((p,i) => BUILTIN.push({id:s.id+':'+i, t:p[0], d:p[1], n:p[2]||'', sit:s.id, src:p[3]||''})));
+SITS.forEach(s => s.p.forEach((p,i) => BUILTIN.push({id:s.id+':'+i, t:p[0], d:p[1], n:p[2]||'', sit:s.id, src:p[3]||'', en:(typeof ENGLISCH!=='undefined' && ENGLISCH[p[0]])||''})));
 
 /* ---------- Backend (Supabase) ---------- */
 const API = {
@@ -202,7 +202,7 @@ function addToList(listId, card){
 
 /* ---------- Zustand der Ansichten ---------- */
 let cur = 'start';
-const UI = {sit:null, cover:false, target:'merk', learnMode:'karten', deck:'all', dir:'t2d', list:'merk', confirmDel:null};
+const UI = {trDir:'de2t', trQ:'', trT:null, sit:null, cover:false, target:'merk', learnMode:'karten', deck:'all', dir:'t2d', list:'merk', confirmDel:null};
 let FC = null, Q = null, RQ = null;
 
 /* ---------- Konto ---------- */
@@ -243,11 +243,12 @@ function go(tab){
   renderTabs(); render(); window.scrollTo({top:0});
   if (tab === 'community' && API.ready && Date.now() - COM.loadedAt > 15000) loadCommunity();
 }
-function refresh(){ if (!FC && !Q && !RQ) { if (cur === 'community' && $('#comList')) updateComList(); else if (cur !== 'listen') render(); } }
+function refresh(){ if (!FC && !Q && !RQ) { if (cur === 'community' && $('#comList')) updateComList(); else if (cur === 'uebersetzer') trRender(); else if (cur !== 'listen') render(); } }
 function render(){
   const v = $('#view');
-  v.innerHTML = ({start:vStart, situationen:vSits, lernen:vLernen, laute:vLaute, community:vCommunity, listen:vListen}[cur] || vStart)();
+  v.innerHTML = ({start:vStart, uebersetzer:vUebersetzer, situationen:vSits, lernen:vLernen, laute:vLaute, community:vCommunity, listen:vListen}[cur] || vStart)();
   if (cur === 'community') updateComList();
+  if (cur === 'uebersetzer') trRender();
 }
 
 function vStart(){
@@ -267,7 +268,7 @@ function vStart(){
         '<div class="stat"><b>'+c.neu+'</b><span class="small muted">noch neu</span></div>'+
         '<div class="stat"><b>'+c.sure+'</b><span class="small muted">sitzen fest</span></div>'+
       '</div>'+
-      '<div class="row"><button class="btn primary" data-act="quickstart">'+(c.due ? c.due+' fällige Karten lernen' : 'Neue Karten lernen')+'</button><button class="btn" data-go="situationen">Situationen ansehen</button></div>'+
+      '<div class="row"><button class="btn primary" data-act="quickstart">'+(c.due ? c.due+' fällige Karten lernen' : 'Neue Karten lernen')+'</button><button class="btn" data-go="uebersetzer">Übersetzer</button><button class="btn" data-go="situationen">Situationen ansehen</button></div>'+
     '</div>'+
     '<div class="panel stack">'+
       '<div class="label">Lernkasten</div>'+
@@ -500,6 +501,129 @@ async function comVote(id){
   loadCommunity();
 }
 
+/* ---------- Übersetzer ---------- */
+const TR_DIRS = {
+  de2t: {von:'Deutsch', nach:'Tirolerisch', feld:'d', ziel:'t', tausch:'t2de', bsp:['Kartoffeln','Hallo','Rücken','Brötchen','Wie geht es dir?','Schluckauf']},
+  en2t: {von:'Englisch', nach:'Tirolerisch', feld:'en', ziel:'t', tausch:'t2en', bsp:['potatoes','hello','bread roll','cheers','How are you?','headache']},
+  t2de: {von:'Tirolerisch', nach:'Deutsch', feld:'t', ziel:'d', tausch:'de2t', bsp:['Goggelen','Buggl','bärig','Schnaggler','Oachkatzlschwoaf','Griaß di']},
+  t2en: {von:'Tirolerisch', nach:'Englisch', feld:'t', ziel:'en', tausch:'en2t', bsp:['Goggelen','Buggl','bärig','Schnaggler','Oachkatzlschwoaf','Griaß di']}
+};
+const TR_STOP = new Set(['der','die','das','des','den','dem','ein','eine','einen','einem','a','an','the','to','s','d']);
+const trFold = s => String(s||'').toLowerCase().replace(/[åä]/g,'a').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ß/g,'ss')
+  .replace(/['’`´]/g,'').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+const trCore = s => { const f = trFold(s); const c = f.split(' ').filter(w => !TR_STOP.has(w)).join(' '); return c || f; };
+const trVarianten = feld => String(feld||'').replace(/\(.*?\)/g,' ').split(/\s*(?:\/|,|;)\s*/).map(trCore).filter(Boolean);
+function trDist(a, b){
+  const m = a.length, n = b.length; if (!m) return n; if (!n) return m;
+  const d = []; for (let i=0;i<=m;i++){ d[i]=[i]; } for (let j=0;j<=n;j++) d[0][j]=j;
+  for (let i=1;i<=m;i++) for (let j=1;j<=n;j++){
+    const k = a[i-1]===b[j-1]?0:1;
+    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+k);
+    if (i>1 && j>1 && a[i-1]===b[j-2] && a[i-2]===b[j-1]) d[i][j] = Math.min(d[i][j], d[i-2][j-2]+1);
+  }
+  return d[m][n];
+}
+const trAehnlich = (a, b) => 1 - trDist(a, b) / Math.max(a.length, b.length, 1);
+function trIndex(){
+  return builtinAll().map(c => ({c, en: c.en || ''}));
+}
+function trFeld(e, feld){ return feld === 'en' ? e.en : e.c[feld]; }
+function trSuche(q, dir){
+  const cfg = TR_DIRS[dir], qc = trCore(q);
+  if (!qc) return {treffer:[], meintest:[], woerter:null};
+  const qTok = qc.split(' ');
+  const treffer = [], fuzzy = [];
+  trIndex().forEach(e => {
+    const vs = trVarianten(trFeld(e, cfg.feld));
+    if (!vs.length) return;
+    let score = 0, best = 0, bestText = '';
+    vs.forEach(v => {
+      if (v === qc) score = Math.max(score, 100);
+      else {
+        const vTok = v.split(' ');
+        if (qTok.every(t => vTok.includes(t))) score = Math.max(score, 80 - Math.min(20, vTok.length - qTok.length));
+        else if (qc.length >= 3 && v.includes(qc)) score = Math.max(score, 50);
+        const sims = [trAehnlich(qc, v)];
+        if (v.length > qc.length + 2) sims.push(trAehnlich(qc, v.slice(0, qc.length + 1)) - 0.05);
+        if (qTok.length === 1) vTok.forEach(t => { sims.push(trAehnlich(qc, t) - 0.02); if (t.length > qc.length + 2) sims.push(trAehnlich(qc, t.slice(0, qc.length + 1)) - 0.07); });
+        const s = Math.max(...sims);
+        if (s > best) { best = s; bestText = v; }
+      }
+    });
+    if (score) treffer.push({e, score});
+    else if (best >= 0.7) fuzzy.push({e, sim:best});
+  });
+  treffer.sort((a,b) => b.score - a.score || a.e.c.t.length - b.e.c.t.length);
+  fuzzy.sort((a,b) => b.sim - a.sim);
+  let woerter = null;
+  if (!treffer.some(t => t.score >= 80) && qTok.length >= 2) {
+    const original = q.trim().split(/\s+/).map(w => ({w, f: trFold(w)})).filter(x => x.f && !TR_STOP.has(x.f));
+    woerter = original.map(({w, f: tok}) => {
+      let bestE = null, bestS = 0, exakt = false;
+      trIndex().forEach(e => trVarianten(trFeld(e, cfg.feld)).forEach(v => {
+        if (v.includes(' ')) return;
+        if (v === tok) { if (!exakt || e.c.t.length < bestE.c.t.length) { bestE = e; exakt = true; bestS = 1; } }
+        else if (!exakt) { const s = trAehnlich(tok, v); if (s > bestS) { bestS = s; bestE = e; } }
+      }));
+      return {tok: w.replace(/[.,!?;:]+$/,''), e: (exakt || bestS >= 0.75) ? bestE : null, exakt};
+    });
+  }
+  return {treffer: treffer.slice(0, 12), meintest: treffer.some(t => t.score === 100) ? [] : fuzzy.slice(0, 6), woerter};
+}
+function trZiel(e, dir){
+  const z = TR_DIRS[dir].ziel;
+  if (z === 'en') return e.en || (e.c.d + ' (nur auf Deutsch vorhanden)');
+  return e.c[z];
+}
+function trQuelle(e, dir){ const f = TR_DIRS[dir].feld; return f === 'en' ? e.en : e.c[f]; }
+function vUebersetzer(){
+  const dir = UI.trDir, cfg = TR_DIRS[dir];
+  return '<div class="stack"><div><h2 style="font-size:22px">Übersetzer</h2><p class="muted" style="margin:.3em 0 0;max-width:64ch">Schlag Wörter und Sätze im Wörterbuch nach, von Deutsch oder Englisch auf Tirolerisch und zurück. Findet sich nichts Genaues, bekommst du ähnliche Einträge vorgeschlagen.</p></div>'+
+    '<div class="panel stack">'+
+      '<div class="row tr-dir"><div class="seg" role="group" aria-label="Richtung">'+
+        Object.entries(TR_DIRS).map(([k,v]) => '<button data-trdir="'+k+'" aria-pressed="'+(dir===k)+'">'+v.von+' → '+v.nach+'</button>').join('')+
+      '</div><button class="btn ghost small" data-act="trswap" title="Richtung umdrehen">⇄ Tauschen</button></div>'+
+      '<div class="field"><label class="label" for="trQ">'+esc(cfg.von)+'</label><input class="inp tr-inp" id="trQ" data-trq="1" value="'+esc(UI.trQ)+'" placeholder="Wort oder Satz eingeben" autocomplete="off" autocapitalize="off" spellcheck="false"></div>'+
+      '<div class="row small"><span class="muted">Zum Beispiel:</span>'+cfg.bsp.map(b => '<button class="chipbtn" data-trset="'+esc(b)+'">'+esc(b)+'</button>').join('')+'</div>'+
+    '</div>'+
+    '<div id="trOut"></div></div>';
+}
+function trRender(){
+  const out = $('#trOut'); if (!out) return;
+  const dir = UI.trDir, cfg = TR_DIRS[dir], q = UI.trQ.trim();
+  if (!q) { out.innerHTML = ''; return; }
+  const r = trSuche(q, dir);
+  const zielDia = cfg.ziel === 't';
+  const karte = (e, klein) => {
+    const s = SITS.find(x => x.id === e.c.sit);
+    return '<div class="tr-hit'+(klein?' klein':'')+'"><div class="tr-ziel'+(zielDia?' dia':'')+'">'+esc(trZiel(e, dir))+'</div>'+
+      '<div class="muted small">'+esc(cfg.von)+': '+esc(trQuelle(e, dir) || e.c.d)+(cfg.ziel !== 'd' && cfg.feld !== 'd' ? ' · Deutsch: '+esc(e.c.d) : '')+'</div>'+
+      (e.c.n ? '<div class="small muted"><i>'+esc(e.c.n)+'</i></div>' : '')+
+      '<div class="row small" style="margin-top:6px">'+(s?'<button class="btn ghost small" data-sit="'+s.id+'">'+esc(s.d)+' →</button>':'')+
+      '<button class="btn ghost small" data-add-builtin="'+esc(e.c.id)+'">+ Merkliste</button></div></div>';
+  };
+  let h = '';
+  if (r.treffer.length) {
+    h += '<section class="panel stack"><div class="label">'+(r.treffer[0].score === 100 ? 'Übersetzung' : 'Einträge mit „'+esc(q)+'“')+'</div><div class="tr-list">'+r.treffer.map(t => karte(t.e)).join('')+'</div></section>';
+  }
+  if (r.meintest.length) {
+    h += '<section class="panel stack"><div class="label">Meintest du?</div><div class="row">'+
+      r.meintest.map(f => { const v = trVarianten(trQuelle(f.e, dir))[0] || ''; const anzeige = (trQuelle(f.e, dir) || '').replace(/\s*\(.*?\)/g,'').split(/\s*[\/,;]\s*/)[0]; return '<button class="chipbtn gross" data-trset="'+esc(anzeige)+'">'+esc(anzeige)+' <span class="muted">→ '+esc(trZiel(f.e, dir))+'</span></button>'; }).join('')+
+      '</div></section>';
+  }
+  if (r.woerter && r.woerter.some(w => w.e)) {
+    h += '<section class="panel stack"><div class="label">Wort für Wort</div><p class="small muted" style="margin:0">Den ganzen Satz gibt es nicht im Wörterbuch. Hier die einzelnen Wörter, eine echte Übersetzung ersetzt das nicht.</p><div class="tr-woerter">'+
+      r.woerter.map(w => '<div class="tr-wort"><span class="muted">'+esc(w.tok)+'</span><span'+(zielDia?' class="dia"':'')+'>'+(w.e ? esc(trZiel(w.e, dir))+(w.exakt?'':' <span class="pill">ähnlich</span>') : '<span class="muted">–</span>')+'</span></div>').join('')+'</div></section>';
+  }
+  if (!r.treffer.length && !r.meintest.length && !(r.woerter && r.woerter.some(w => w.e))) {
+    h += '<section class="empty stack" style="align-items:center">„'+esc(q)+'“ steht noch nicht im Wörterbuch.'+
+      (API.ready ? '<button class="btn" data-trpropose="1">In der Community vorschlagen</button>' : '')+'</section>';
+  } else if (!r.treffer.some(t => t.score === 100) && API.ready) {
+    h += '<p class="small muted" style="margin:0">Nicht das Richtige dabei? <button class="linkbtn" data-trpropose="1">Schlag es in der Community vor.</button></p>';
+  }
+  out.innerHTML = h;
+}
+
 /* ---------- Meine Listen ---------- */
 function vListen(){
   if (!S.lists.find(l=>l.id===UI.list)) UI.list = S.lists[0].id;
@@ -523,11 +647,14 @@ function vListen(){
 /* ---------- Ereignisse ---------- */
 document.addEventListener('click', e => {
   if (e.target.id === 'overlay') { hideSheet(); return; }
-  const t = e.target.closest('[data-tab],[data-go],[data-sit],[data-act],[data-add-builtin],[data-learn],[data-lmode],[data-grade],[data-qpick],[data-rqpick],[data-list],[data-delcard],[data-reveal],[data-vote],[data-comfilter],[data-comconfirm],[data-comdo],[data-comstatus],[data-propose]');
+  const t = e.target.closest('[data-tab],[data-go],[data-sit],[data-act],[data-add-builtin],[data-learn],[data-lmode],[data-grade],[data-qpick],[data-rqpick],[data-list],[data-delcard],[data-reveal],[data-vote],[data-comfilter],[data-comconfirm],[data-comdo],[data-comstatus],[data-propose],[data-trdir],[data-trset],[data-trpropose]');
   if (!t) return;
   const d = t.dataset;
   if (d.tab) return go(d.tab);
   if (d.go) return go(d.go);
+  if (d.trdir) { UI.trDir = d.trdir; render(); trRender(); const i = $('#trQ'); if (i) i.focus(); return; }
+  if (d.trset !== undefined) { UI.trQ = d.trset; const i = $('#trQ'); if (i) { i.value = d.trset; i.focus(); } trRender(); return; }
+  if (d.trpropose) { const q = UI.trQ.trim(); const zuT = TR_DIRS[UI.trDir].feld === 't'; COM.draft = {t: zuT ? q : '', d: TR_DIRS[UI.trDir].feld === 'd' ? q : '', sit:'', n:''}; COM.msg = ''; return go('community'); }
   if (d.propose !== undefined) { COM.draft.sit = d.propose; COM.msg = ''; return go('community'); }
   if (d.comfilter) { COM.filter = d.comfilter; COM.confirm = null; return render(); }
   if (d.comconfirm !== undefined) { COM.confirm = d.comconfirm ? {id:d.comconfirm, what:d.what} : null; return updateComList(); }
@@ -555,6 +682,7 @@ document.addEventListener('click', e => {
   if (d.list) { UI.list = d.list; UI.confirmDel = null; return render(); }
   if (d.delcard) { const l = S.lists.find(x=>x.id===UI.list); l.cards = l.cards.filter(c=>c.id!==d.delcard); delete S.prog[d.delcard]; persist(); return render(); }
   switch (d.act) {
+    case 'trswap': UI.trDir = TR_DIRS[UI.trDir].tausch; render(); trRender(); break;
     case 'login': loginSheet(); break;
     case 'logout': API.logout(); break;
     case 'profil': nameSheet('', false); break;
@@ -588,7 +716,7 @@ document.addEventListener('keydown', e => {
     else if (FC.flip && ['1','2','3'].includes(e.key)) { const b = document.querySelector('[data-grade="'+['again','hard','good'][+e.key-1]+'"]'); if (b) b.click(); }
   }
 });
-document.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.draft; if (k) COM.draft[k] = e.target.value; });
+document.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.draft; if (k) COM.draft[k] = e.target.value; if (e.target.dataset && e.target.dataset.trq) { UI.trQ = e.target.value; clearTimeout(UI.trT); UI.trT = setTimeout(trRender, 120); } });
 document.addEventListener('change', e => {
   const k = e.target.dataset.change;
   if (!k) return;

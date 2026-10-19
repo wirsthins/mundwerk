@@ -1,0 +1,120 @@
+/* Mundwerk – englische Übersetzungen für den Übersetzer.
+   Schlüssel ist der tirolerische Eintrag aus data.js, genau so geschrieben.
+   Fehlt ein Eintrag hier, findet ihn der Übersetzer nur über Deutsch. */
+const ENGLISCH = {
+ // Begrüßen & Smalltalk
+ "Griaß di!":"Hi! (to one person)", "Griaß enk!":"Hi, everyone!", "Griaß Gott!":"Good day! / Hello (polite)",
+ "Servus!":"Hi! / Bye!", "Pfiat di!":"Bye!", "Pfiat enk!":"Bye, everyone!", "Wia geaht's da?":"How are you?",
+ "Passt eh.":"I'm fine, all good.", "Wås isch los?":"What's going on?", "Wo kimmsch du her?":"Where are you from?",
+ "I bin nit vo då.":"I'm not from here.", "Wia hoaßt du?":"What's your name?", "Bis spater!":"See you later!",
+ "Griaß eich!":"Hi, everyone!", "Pfiat Gott!":"Goodbye! (polite)", "Wiederschaun!":"Goodbye! (polite)",
+ "Grüeßt ma olle umedum!":"Greetings to everyone!",
+ // Einkaufen
+ "Wås kost des?":"How much is this?", "I hätt gern zwoa Semml.":"I'd like two bread rolls.",
+ "Zehn Deka Speck, bitte.":"100 grams of bacon, please.", "Derf's a bissl mehr sein?":"Is a little more okay?",
+ "Sunst no eppes?":"Anything else?", "Na, des wår's.":"No, that's all.", "Brauchsch a Sackl?":"Do you need a bag?",
+ "I hån mein Zegger dabei.":"I've brought my own bag.", "Wo find i die Erdäpfl?":"Where can I find the potatoes?",
+ "Gibt's då an Topfn?":"Do you have quark here?", "Paradeiser":"tomatoes", "Marilln":"apricots",
+ "Schlagobers":"whipped cream", "Des isch ma z'teuer.":"That's too expensive for me.",
+ // Beim Arzt
+ "Griaß Gott, Frau Dokter.":"Hello, doctor.", "Mir isch nit guat.":"I don't feel well.", "I bin krånk.":"I'm sick.",
+ "Mir tuat der Schädl weh.":"I have a headache.", "Der Hals kratzt mi.":"My throat is scratchy.",
+ "I hån Fieber.":"I have a fever.", "I hån mi verkühlt.":"I've caught a cold.", "Seit nechtn.":"Since yesterday.",
+ "Wo tuat's weh?":"Where does it hurt?", "Då tuat's weh.":"It hurts here.", "Mir isch schwindlig.":"I feel dizzy.",
+ "'s Knia tuat ma weh.":"My knee hurts.", "Håm S' die e-card mit?":"Do you have your health insurance card?",
+ "I brauch a Krånknståndsbestätigung.":"I need a sick note.", "Nehmen S' des dreimål am Tåg.":"Take this three times a day.",
+ "Mir isch letz.":"I feel sick.", "Der Dokta":"the doctor", "Die Apoteggn":"the pharmacy", "Der Binggl":"the bump, bruise",
+ "Der Buggl":"the back", "Der Gnagg":"the neck", "Die Haxn":"the legs", "Die Zeachn":"the toes", "Die Zennt":"the teeth",
+ "Wea":"pain", "Der Schnaggler":"hiccups", "Die Speiberei":"stomach flu", "Die Kearlecka":"cold sore",
+ "sumsen":"to moan, to complain", "Was sumschn so?":"What are you moaning about?", "magiern":"to fake being ill",
+ "Des Heisl":"the toilet", "gneatig, oalig":"in a hurry", "gschleinen":"to hurry up",
+ // Wirtshaus
+ "Isch då no frei?":"Is this seat free?", "Die Kårte, bitte.":"The menu, please.", "A Hålbe, bitte.":"A half-litre of beer, please.",
+ "A Radler":"a shandy (beer with lemonade)", "Wås kånnsch empfehln?":"What do you recommend?", "I nimm a Gröstl.":"I'll have a Gröstl (potato hash).",
+ "Kaspressknödl":"fried cheese dumplings", "A Marend":"a snack, light meal", "Guatn!":"Enjoy your meal!", "Prost!":"Cheers!",
+ "Des isch guat gwesn!":"That was good!", "Zåhln, bitte!":"The bill, please!", "Zsåmm oder getrennt?":"Together or separately?",
+ "Passt so!":"Keep the change!", "Hots gschmeckt?":"Did you enjoy it?", "Mogsch a Schnapsal?":"Would you like a schnapps?",
+ "A Verlängata":"a long black coffee", "A Weiß-Sauer":"a white wine spritzer", "A Kracherl":"a lemonade, soda",
+ "botzn, patzn":"to spill, to make a mess", "Um den Speck is a Griß.":"Everyone wants the bacon.", "tzutzln":"to suck (e.g. on a straw)",
+ "schnapseln":"to drink schnapps",
+ // Essen
+ "Der Graukas":"grey cheese (Tyrolean sour-milk cheese)", "Die Kasspatzln":"cheese spaetzle", "Die Schwammerlen":"mushrooms",
+ "Die Eierschwammerln":"chanterelles", "Der Fleischkas":"meatloaf (Leberkäse)", "Die Goggelen":"eggs", "Die Keschtn":"chestnuts",
+ "Die Marün":"apricots", "Die Melanzani":"aubergines, eggplants", "Des Muas":"porridge, mush", "Die Oranschn":"oranges",
+ "Der Schlag, des Obas":"cream", "Die Tschogglad":"chocolate", "Der Weggn":"loaf of bread", "Die Semml":"bread roll",
+ "Der Topfn":"quark, curd cheese", "Die Erdäpfel":"potatoes",
+ // Am Berg
+ "Wia weit isch's no bis zur Hütt'n?":"How far is it to the hut?", "Heint geaht's auf d'Ålm.":"Today we're going up to the alpine pasture.",
+ "Des isch steil!":"That's steep!", "I bin gånz hin.":"I'm exhausted.", "Håsch a Wåsser dabei?":"Do you have water with you?",
+ "Berg Heil!":"Summit greeting", "Die Lahn":"avalanche", "Der Tschurtsch":"pine cone", "Die Zirbm":"Swiss stone pine",
+ "'s Joch":"mountain pass, saddle", "Der Föhn kimmt.":"The föhn wind is coming.", "Die Tschurtschn":"pine cones",
+ // Natur
+ "Der Oachkatzlschwoaf":"squirrel's tail", "Der Giggerigie kraht.":"The rooster crows.", "Die Viecher":"animals",
+ "Die Kuselen":"cows", "Die Goas":"goat", "Der Fok":"pig", "Der Foknstoll":"pigsty", "Notsch":"piglet",
+ "Des Murmele":"marmot", "Die Antn":"ducks", "Der Bam":"tree",
+ // Wetter
+ "Heint isch's hoaß.":"It's hot today.", "'s schneibt.":"It's snowing.", "'s regnet in oan Trumm.":"It's raining non-stop.",
+ "Mir isch kålt.":"I'm cold.", "A Sauwetter!":"What awful weather!", "Morgn wird's schian.":"It'll be nice tomorrow.",
+ "Der Föhn geaht.":"The föhn wind is blowing.", "'s isch glått.":"It's slippery.", "Des Wetter schlågt um.":"The weather is changing.",
+ "Oftramol wettat's.":"Sometimes there are thunderstorms.",
+ // Arbeit
+ "Hackln":"to work", "Heb amål!":"Give me a hand lifting this!", "Gib ma amål den Hammer.":"Hand me the hammer.",
+ "Mir måchn Marend.":"We're taking a snack break.", "Feierabnd!":"Quitting time!", "Des geaht si nit aus.":"That won't fit / There's not enough time.",
+ "Tua nit so hudln!":"Don't rush it!", "Des isch a Pfusch.":"That's shoddy work.", "Des passt!":"That's fine!",
+ "Kimmsch morgn?":"Are you coming tomorrow?", "Des isch lei a Glump.":"That's just junk.", "Der Radlbeck":"wheelbarrow",
+ "tschelwenggat":"crooked, lopsided", "gfierig":"easy to handle, going smoothly",
+ // Familie
+ "Die Gitsch":"girl", "Der Bua":"boy", "Die Muater":"mother", "Der Nene":"grandpa", "Der Göt":"godfather",
+ "Die Godl":"godmother", "Der Spezl":"buddy, close friend", "Die Leit":"people", "Der Hoangart":"a cosy get-together, chat",
+ "Mir sein zu viert.":"There are four of us.",
+ // Typen
+ "Lota":"man", "Weibetz":"woman", "Loamsieder":"slowcoach, bore", "Lugntschippl":"liar nobody believes",
+ "Peckn":"oddball", "potschad":"clumsy", "Potschgoggl":"klutz", "schmattig":"very rich", "Schmotzgoggl":"sweet little girl",
+ "Sektnschlägl":"grouch", "sektisch":"grumpy, unfriendly", "Lauta Sektn in Kopf!":"Nothing but nonsense in your head!",
+ "wompat":"with a beer belly", "Ponzn":"big belly", "Zoggla":"scruffily dressed person", "schlampert":"sloppy",
+ "Zornpingl":"hothead", "a Bsundara":"a special one", "Bissgurn":"shrew, nasty woman", "Dozn, Greggeler":"very small person",
+ "Einiparfler":"someone who butts in", "Kloeznklauba":"nitpicker, complicated person", "komota Hegl":"pleasant, easygoing person",
+ "Krautara":"good-for-nothing", "Lulatsch":"tall, lanky guy", "Schlampetatsch":"very messy person",
+ "Sumpera, Murkser, Potz":"bungler, bad worker", "a terischa Lotta":"a hard-of-hearing man",
+ "Fackalar":"slob who tells dirty jokes", "Gschaftlhuaba":"busybody, show-off", "Schmähtandler":"fibber, con man",
+ "Hallodri":"rascal, scamp", "Haberer":"guy, mate",
+ // Kinder
+ "Fangalex, Derwischaletz":"playing tag", "Versteckalex":"hide and seek", "Gummihupfen":"Chinese jump rope",
+ "Templhupfen":"hopscotch", "Purzigagele":"somersault", "Floschn drahnen":"spin the bottle", "Springgingerle":"fidgety child",
+ "Rotzbibm, Robnbratl":"cheeky brat", "a gachzoaniga Gschrapp":"a hot-tempered kid", "Poppele":"baby", "Poppenwagen":"pram, stroller",
+ "heielen":"to sleep (child's word)",
+ // Feiern
+ "Du gfolsch ma!":"I like you! (You appeal to me)", "I mog di.":"I like you.", "Mogsch di herhockn?":"Would you like to sit with us?",
+ "Mogsch wos trinkn?":"Would you like something to drink?", "Wia hoaschn du?":"So what's your name?", "Woher kimmschn du?":"So where are you from?",
+ "A Hetz machen":"to have fun", "hetzig":"funny, fun", "A fesches Madl":"a pretty girl", "A fescher Bua":"a handsome lad",
+ "Diandl":"girl", "A hoaßa Fega":"a very attractive person", "A Schnitzel":"a very handsome man", "rauschig":"tipsy",
+ "A Fetzn":"a proper drunk", "A Dullar":"a drunken state", "tamisch":"dazed, dizzy", "terisch":"hard of hearing",
+ "I wear terisch.":"I can't understand a word.", "Der Fotzhobl":"harmonica", "losnen":"to listen", "Die Rotzbremsen":"moustache",
+ "strawanzen":"to roam around", "lanschn":"to stroll around", "trotschn":"to chat, to gossip", "Der Tschigg":"cigarette",
+ // Unterwegs
+ "Wo isch die Bushåltestell?":"Where is the bus stop?", "Wia kimm i zum Bahnhof?":"How do I get to the train station?",
+ "Gråd aus und nåcher links.":"Straight ahead, then left.", "Isch des weit?":"Is it far?", "Des isch glei ums Eck.":"It's just around the corner.",
+ "Fåhrt der Bus auf Igls?":"Does the bus go to Igls?", "I find nit hin.":"I can't find the way.", "Wånn fåhrt der nächste Zug?":"When is the next train?",
+ "Der Bichl":"hill", "aui, auffi":"up", "oi, ochi":"down", "außi":"out", "entn":"over there", "grodaus":"straight ahead",
+ "arschlings":"backwards",
+ // Redewendungen
+ "Des isch bärig!":"That's great!", "Lei nit lugg lassn!":"Never give up!", "Hearsch!":"Come on! / Really?", "Jessas!":"Oh my God!",
+ "Sell isch wåhr.":"That's true.", "Mir isch des wurscht.":"I don't care.", "Magsch eppes trinkn?":"Would you like something to drink?",
+ "Des isch schiach.":"That's ugly.", "Fesch!":"Smart! Pretty!", "Gell?":"Right? Isn't it?", "Jå eh.":"Yes, sure.",
+ "Tua nit so!":"Don't make a fuss!", "Na schiach!":"How ugly!", "Mei schian!":"How lovely!", "volle cool":"totally cool",
+ "Hardigatti!":"Good grief!", "Harrgottzeitn!":"For heaven's sake!", "zach":"tough, tedious", "arg":"bad, intense",
+ "tratschen, fratscheln":"to gossip", "Die Watschn":"a slap in the face", "I schmier da oane!":"I'll give you a slap!",
+ "Kruzifix noamol!":"Damn it!", "Halt di Goschn!":"Shut up!", "Koan Zoasa mehr machn":"to not move a muscle",
+ "Die Fiaß tschmagelen!":"Your feet stink!",
+ // Kleine Wörter
+ "a":"also, too", "amol":"once", "decht, dechtasch":"still, anyway", "woll, woi":"of course, sure", "epper":"somebody",
+ "es":"you (plural)", "ge?":"right?", "ge!":"come off it!", "ma ge he!":"no way!", "ha?":"pardon?", "nacha, nochand":"later, afterwards",
+ "nimma":"no more, no longer", "ondersch":"different(ly)", "olm, alleweil":"always", "zizzalweis":"bit by bit",
+ // Spitznamen
+ "Innsbrucker Karpfen":"people from Innsbruck (nickname)", "Höttinger Nudelsetzer":"people from Hötting (nickname)",
+ "Haller Kübel":"people from Hall (nickname)", "Talfer Hoa":"people from Telfs (nickname)", "Schmuggler":"people from Scharnitz (nickname)",
+ "Fischsinger":"people from Pettnau (nickname)", "Krotnmelcher":"people from Polling (nickname)", "Ofenschliefer":"lads from Arzl (nickname)",
+ "Bitzler":"people from Ischgl (nickname)", "Gealrubeler":"people from the Arlberg (nickname)", "Sunnaluahner, Zipflkappa":"people from Lermoos (nickname)",
+ "Ofentürler":"people from Bschlabs (nickname)", "Gelbbäuch":"people from Weerberg (nickname)", "Weggalfresser":"people from Thierbach (nickname)",
+ "Mattiger Kälber":"people from Matrei (nickname)", "Virger Drahle":"people from Virgen (nickname)"
+};

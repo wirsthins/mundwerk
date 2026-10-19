@@ -221,3 +221,20 @@ img{max-width:100%}
 footer a{color:var(--muted)}
 .links{display:flex;gap:14px}
 .sheet a{color:var(--accent)}
+
+/* Übersetzer */
+.tr-dir{justify-content:space-between}
+.tr-inp{font-size:18px;padding:12px 14px;width:100%}
+.chipbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 11px;cursor:pointer;font-size:13px;color:var(--ink)}
+.chipbtn:hover{border-color:var(--accent)}
+.chipbtn.gross{font-size:15px;padding:7px 14px}
+.chipbtn.gross .muted{font-size:13px}
+.tr-list{display:flex;flex-direction:column}
+.tr-hit{padding:12px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.tr-hit:first-child{border-top:0;padding-top:0}
+.tr-ziel{font-size:22px;line-height:1.2;font-weight:600}
+.tr-ziel.dia{font-weight:500;font-size:26px}
+.tr-woerter{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.tr-wort{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.tr-wort .dia{font-size:19px}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);cursor:pointer;font:inherit;text-decoration:underline}
